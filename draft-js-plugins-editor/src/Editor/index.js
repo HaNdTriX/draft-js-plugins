@@ -152,22 +152,18 @@ export default class PluginEditor extends Component {
     this.refs.editor.focus();
   };
 
-  createHandleListener = (name) => (event) => {
-    const preventDefaultBehaviour = this.plugins
+  createHandleListener = (name) => (event) => (
+    this.plugins
       .filter((plug) => plug[name])
       .map((plugin) => plugin[name](event))
-      .find((result) => result === true);
+      .find((result) => result === true) === true
+  )
 
-    return preventDefaultBehaviour === true;
-  }
-
-  createOnListener(name) {
-    return (event) => {
-      this.plugins
+  createOnListener = (name) => (event) => (
+    this.plugins
       .filter(plug => typeof plug[name] === 'function')
-      .forEach(plug => plug[name](event));
-    };
-  }
+      .forEach(plug => plug[name](event))
+  )
 
   createEventListeners = () => {
     const listeners = {
@@ -178,15 +174,16 @@ export default class PluginEditor extends Component {
       keyBindingFn: this.keyBindingFn,
       handleReturn: this.handleReturn,
     };
-    // bind random onListeners and handleListeners
 
     const keepHandlers = ['onChange', 'handleKeyCommand'];
 
+    // bind random onListeners and handleListeners
     this.plugins.forEach((plug) => {
       Object.keys(plug).forEach((attrName) => {
         if (attrName.indexOf('on') === 0 && !keepHandlers.includes(attrName)) {
           listeners[attrName] = this.createOnListener(attrName);
         }
+
         if (attrName.indexOf('handle') === 0 && !keepHandlers.includes(attrName)) {
           listeners[attrName] = this.createHandleListener(attrName);
         }
@@ -194,10 +191,11 @@ export default class PluginEditor extends Component {
     });
 
     return listeners;
-  }
+  };
 
   render() {
     let pluginProps = {};
+
     // This puts pluginProps and the object inside getEditorProps
     // on the Editor component (main use case is for aria props right now)
     // Last plugin wins right now (not ideal)
