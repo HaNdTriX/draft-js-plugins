@@ -200,6 +200,7 @@ export default class PluginEditor extends Component {
     let pluginProps = {};
     // This puts pluginProps and the object inside getEditorProps
     // on the Editor component (main use case is for aria props right now)
+    // Last plugin wins right now (not ideal)
     this.plugins.forEach((plugin) => {
       if (plugin.getEditorProps) {
         pluginProps = {
